@@ -57,7 +57,7 @@ This guide refers to chapters in the CIS Benchmark. For full explanation you sho
 | __2.5 Information Disclosure__||| |
 | 2.5.1 Ensure server_tokens directive is set to `off` (Scored) | OK | server_tokens is configured to off by defaukt| |
 | 2.5.2 Ensure default error and index.html pages do not reference NGINX (Scored) | ACTION NEEDED| 404 shows no version at all, 503 and 403 show "nginx", which is hardcoded [see this line in nginx source code](https://github.com/nginx/nginx/blob/master/src/http/ngx_http_special_response.c#L36) | configure custom error pages at least for 403, 404 and 503 and 500|
-| 2.5.3 Ensure hidden file serving is disabled (Not Scored) | ACTION NEEDED| config not set | configure a ??? Snippet, but beware of .well-known challenges or similar|
+| 2.5.3 Ensure hidden file serving is disabled (Not Scored) | ACTION NEEDED | config not set | configure a config.server-snippet Snippet, but beware of .well-known challenges or similar. Refer to the benchmark here please |
 | 2.5.4 Ensure the NGINX reverse proxy does not enable information disclosure (Scored)| ACTION NEEDED| hide not configured| configure hide-headers with array of "X-Powered-By" and "Server": [according to this documentation](https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/configmap.md#hide-headers) |
 | ||| |
 | __3 Logging__ ||| |
@@ -78,12 +78,12 @@ This guide refers to chapters in the CIS Benchmark. For full explanation you sho
 | 4.1.3 Ensure private key permissions are restricted (Scored)| ACTION NEEDED| See previous answer| |
 | 4.1.4 Ensure only modern TLS protocols are used (Scored)| OK/ACTION NEEDED | Default is TLS 1.2 + 1.3, while this is okay for CIS Benchmark, cipherlist.eu only recommends 1.3. This may cut off old OS's | Set controller.config.ssl-protocols to "TLSv1.3"|
 | 4.1.5 Disable weak ciphers (Scored) | ACTION NEEDED| Default ciphers are already good, but cipherlist.eu recommends even stronger ciphers | Set controller.config.ssl-ciphers to "EECDH+AESGCM:EDH+AESGCM"|
-| 4.1.6 Ensure custom Diffie-Hellman parameters are used (Scored) | ACTION NEEDED| No custom DH parameters are generated| Generate dh parameters for each ingress deployment you use - see ??? For a how to |
+| 4.1.6 Ensure custom Diffie-Hellman parameters are used (Scored) | ACTION NEEDED| No custom DH parameters are generated| Generate dh parameters for each ingress deployment you use - [see here for a how to](https://kubernetes.github.io/ingress-nginx/examples/customization/ssl-dh-param/) |
 | 4.1.7 Ensure Online Certificate Status Protocol (OCSP) stapling is enabled (Scored) | ???| ???| |
 | 4.1.8 Ensure HTTP Strict Transport Security (HSTS) is enabled (Scored)| OK | HSTS is enabled by default | |
 | 4.1.9 Ensure HTTP Public Key Pinning is enabled (Not Scored)| ???| ???| |
-| 4.1.10 Ensure upstream server traffic is authenticated with a client certificate (Scored) | ???| Highly dependend on backends, not every backend allows configuring this, can also be mitigated via a service mesh| If backend allows it, [manual is here](https://kubernetes.github.io/ingress-nginx/examples/auth/client-certs/)|
-| 4.1.11 Ensure the upstream traffic server certificate is trusted (Not Scored) | ???| Highly dependend on backends, not every backend allows configuring this, can also be mitigated via a service mesh| If backend allows it, [see configuration here](https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/annotations.md#backend-certificate-authentication) |
+| 4.1.10 Ensure upstream server traffic is authenticated with a client certificate (Scored) | DEPENDS ON BACKEND | Highly dependend on backends, not every backend allows configuring this, can also be mitigated via a service mesh| If backend allows it, [manual is here](https://kubernetes.github.io/ingress-nginx/examples/auth/client-certs/)|
+| 4.1.11 Ensure the upstream traffic server certificate is trusted (Not Scored) | DEPENDS ON BACKEND | Highly dependend on backends, not every backend allows configuring this, can also be mitigated via a service mesh| If backend allows it, [see configuration here](https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/annotations.md#backend-certificate-authentication) |
 | 4.1.12 Ensure your domain is preloaded (Not Scored) | ACTION NEEDED| Preload is not active by default | Set controller.config.hsts-preload to true|
 | 4.1.13 Ensure session resumption is disabled to enable perfect forward security (Scored)| ACTION NEEDED| Session tickets are enabled by default | Set controller.config.ssl-session-tickets to false|
 | 4.1.14 Ensure HTTP/2.0 is used (Not Scored) | OK | http2 is set by default| |
@@ -106,6 +106,6 @@ This guide refers to chapters in the CIS Benchmark. For full explanation you sho
 | 5.3.2 Ensure X-Content-Type-Options header is configured and enabled (Scored) | ACTION NEEDED| See previous answer| See previous answer |
 | 5.3.3 Ensure the X-XSS-Protection Header is enabled and configured properly (Scored)| ACTION NEEDED| See previous answer| See previous answer |
 | 5.3.4 Ensure that Content Security Policy (CSP) is enabled and configured properly (Not Scored) | ACTION NEEDED| See previous answer| See previous answer |
-| 5.3.5 Ensure the Referrer Policy is enabled and configured properly (Not Scored)| ???| ???| |
+| 5.3.5 Ensure the Referrer Policy is enabled and configured properly (Not Scored)| ACTION NEEDED | Depends on application. It should be handled in the applications webserver itself, not in the load balancing ingress | check backend webserver |
 | ||| |
 | __6 Mandatory Access Control__| n/a| too high level, depends on backends | |
